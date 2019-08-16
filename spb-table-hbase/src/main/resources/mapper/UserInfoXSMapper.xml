@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxtest.demo.dao.UserInfoXSDao">
+	
+	<sql id="userColumns">
+		uixs.id as id,
+		uixs.phone as phone,
+		uixs.user_id as userId,
+		uixs.name as name,
+		uixs.address as address,
+		uixs.identity as identity,
+		uixs.open_date as openDate,
+		uixs.fee_update_date as feeUpdateDate,
+		uixs.create_time as `createTime`,
+		uixs.update_time as `updateTime`
+	</sql>
+	
+	<!-- 根据ID获取用户	-->
+	<select id="getById" parameterType="long" resultType="UserInfoXS">
+		select 
+			<include refid="userColumns"></include>
+		from user_info_xs uixs
+		where uixs.id=#{id}
+	</select>
+
+	<!-- 查询所有用户 -->
+	<select id="getAll" resultType="UserInfoXS">
+		select 
+			<include refid="userColumns"></include>
+		from user_info_xs uixs
+	</select>
+
+	<select id="findByPhoneAndUserId" resultType="UserInfoXS">
+		select 
+			<include refid="userColumns"></include>
+		from user_info_xs uixs
+		where uixs.phone=#{phone} and uixs.user_id = #{userId}
+	</select>
+	
+	<!-- 保存用户 -->
+	<insert id="insert" parameterType="UserInfoXS" useGeneratedKeys="true" keyProperty="id">
+		insert into user_info_xs (
+			phone,
+			user_id,
+			name,
+			address,
+			identity,
+			open_date,
+			fee_update_date,
+			create_time,
+			update_time
+		) values (
+			#{phone},
+			#{userId},
+			#{name},
+			#{address},
+			#{identity},
+			#{openDate},
+			#{feeUpdateDate},
+			#{createTime},
+			#{updateTime}
+		)
+	</insert>
+	
+	<!-- 更新用户 -->
+	<update id="update" parameterType="UserInfoXS" >
+		update user_info_xs
+		<set>
+			<if test="phone != null"> phone = #{phone},</if>
+			<if test="userId != null"> user_id = #{userId},</if>
+			<if test="name != null"> name = #{name},</if>
+			<if test="address != null"> address = #{address},</if>
+			<if test="identity != null"> identity = #{identity},</if>
+			<if test="openDate != null"> open_date = #{openDate},</if>
+			<if test="createTime != null"> create_time = #{createTime},</if>
+			<if test="updateTime != null"> update_time = #{updateTime},</if>
+			<if test="feeUpdateDate != null"> fee_update_date = #{feeUpdateDate}</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper> 

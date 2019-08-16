@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxtest.demo.dao.HbaseContactsDao">
+    <insert id="add">
+        insert into hbase_contacts(USERID,
+        PHONE,OTHERPHONE,FIRSTCALL,LASTCALL,INTIMES,OUTTIMES,INDURATION,OUTDURATION,INFEE,OUTFEE,ALLTIMES,CALLLOCATION,COMMTYPE)
+        values
+        <foreach collection="solrCallDetailsSimplesList" item="item" index="index" separator=",">
+            (
+            #{item.userId},
+            #{item.phone},
+            #{item.otherPhone},
+            #{item.firstCall},
+            #{item.lastCall},
+            #{item.inTimes},
+            #{item.outTimes},
+            #{item.inDuration},
+            #{item.outDuration},
+            #{item.inFee},
+            #{item.outFee},
+            #{item.allTimes},
+            #{item.callLocation},
+            #{item.commType}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByCondition">
+        delete from hbase_contacts
+        <where>
+            <if test="userId!=null">
+                AND userId =#{userId}
+            </if>
+            <if test="phone!=null and phone !=''">
+                AND phone =#{phone}
+            </if>
+        </where>
+    </delete>
+
+    <select id="query" resultType="SolrCallDetailsSimple">
+        select userId,phone,otherPhone,inTimes,inFee,inDuration,outTimes,outFee,outDuration,
+        firstCall, lastCall,allTimes,commType,callLocation from hbase_contacts
+        <where>
+            <if test="userId!=null">
+                AND userId =#{userId}
+            </if>
+            <if test="phone!=null and phone !=''">
+                AND phone =#{phone}
+            </if>
+        </where>
+        <if test="flag==true">
+            order by allTimes desc limit 20
+        </if>
+    </select>
+
+    <select id="queryUserToExecute" resultType="long">
+        SELECT DISTINCT userId FROM hbase_contacts
+    </select>
+
+
+</mapper> 

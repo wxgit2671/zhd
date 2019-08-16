@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxtest.demo.dao.UserDao">
+	
+	<sql id="userColumns">
+		u.id as id,
+		u.phone as phone,
+		u.name as name, 
+		u.password as password,
+		u.state as state,
+		u.regist_time as registTime,
+		u.info_state as infoState,
+		u.credit_rating_id as 'creditRatingId',
+		u.channel_id as 'channelId',
+		u.device_type as 'deviceType',
+		u.market_state as 'marketState',
+		u.audit_state as 'auditState',
+		u.job_state as 'jobState',
+		u.emergency_contact_state as 'emergencyContactState',
+		u.taobao_state as 'taobaoState',
+		u.zhima_state as 'zhimaState',
+		u.telecom_state as 'telecomState',
+		u.identity_state as 'identityState',
+		u.member_degree_id as 'memberDegreeId',
+		u.system_type as 'systemType',
+		u.delay_degree_date as 'delayDegreeDate',
+		u.delay_degree_id as 'delayDegreeId'
+	</sql>
+	
+	<!-- 根据ID获取用户	-->
+	<select id="getById" parameterType="long" resultType="User">
+		select 
+			<include refid="userColumns"></include>
+		from `user` u
+		where u.id=#{id}
+	</select>
+	
+	<!-- 根据phone获取用户	-->
+	<select id="getByPhone"  resultType="User">
+		select 
+			<include refid="userColumns"></include>
+		from `user` u
+		where u.phone=#{phone}
+	</select>
+
+	<!-- 查询所有用户 -->
+	<select id="getAll" resultType="User">
+		select 
+			<include refid="userColumns"></include>
+		from `user` u
+	</select>
+
+	<select id="findByPhone" parameterType="String" resultType="User">
+		select 
+			<include refid="userColumns"></include>
+		from `user` u
+		where u.phone=#{phone}
+	</select>
+	
+	<select id="findUserIdByIdCardNum" resultType="Long">
+		select u.id
+		from `user` u
+		where exists(select * from user_info where user_info.user_id = u.id and user_info.idcard = #{idcardNum})
+		and u.audit_state = #{auditState}
+	</select>
+	
+	<select id="countNewApply" resultType="Integer">
+		select count(id) from `user` u where u.audit_state = '3' 
+	</select>
+	
+	<select id="findWaitCheck" resultType="String">
+		select 
+			u.id as `id`
+		from 
+			`user` u
+		where 
+			u.audit_state = '3'
+			<if test="notInIds != null">
+				and u.id not in(
+				<foreach collection="notInIds" item="id" separator=",">
+					#{id,jdbcType=NUMERIC}
+				</foreach>
+				,0)
+			</if>
+			<if test="idCardNum != null and idCardNum != ''">
+				and u.id = (select user_id from user_info where user_info.idcard = #{idCardNum})
+			</if>
+		order by id
+	</select>
+	<select id="findOneWaitCheck" resultType="Long">
+		select 
+			u.id as `id`
+		from 
+			`user` u
+		where 
+			u.audit_state = '3'
+			<if test="notInIds != null">
+				and u.id not in(
+				<foreach collection="notInIds" item="id" separator=",">
+					#{id,jdbcType=NUMERIC}
+				</foreach>
+				)
+			</if>
+			<if test="idCardNum != null and idCardNum != ''">
+				and u.id = (select user_id from user_info where user_info.idcard = #{idCardNum})
+			</if>
+		order by id limit 1
+	</select>
+	<select id="findByAuditState" resultType="User">
+		select 
+			<include refid="userColumns"></include>
+		from 
+			`user` u
+		where 
+			audit_state =#{auditState}
+	</select>
+
+	<select id="findByShareCode" parameterType="String" resultType="User">
+		select
+		<include refid="userColumns"></include>
+		from `user` u
+		where u.share_code=#{shareCode}
+	</select>
+	
+	<!-- 保存用户 -->
+	<insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		insert into `user` ( 
+			phone, 
+			password,
+			name, 
+			state,
+			regist_time,
+			info_state,
+			credit_rating_id,
+			channel_id,
+			market_state,
+			device_type,
+			member_degree_id,
+			invite_user_id,
+			system_type,
+			delay_degree_date,
+			delay_degree_id
+		) values (
+			#{phone}, 
+			#{password}, 
+			#{name}, 
+			#{state},
+			#{registTime},
+			#{infoState},
+			#{creditRatingId},
+			#{channelId},
+			#{marketState},
+			#{deviceType},
+			#{memberDegreeId},
+			#{inviteUserId},
+			#{systemType},
+			#{delayDegreeDate},
+			#{delayDegreeId}
+		)
+	</insert>
+	
+	<!-- 更新用户 -->
+	<update id="update" parameterType="User" >
+		update `user`
+		<set>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="password != null">password = #{password},</if>
+			<if test="name != null">name = #{name},</if>
+			<if test="state != null">state = #{state},</if>
+			<if test="registTime != null">regist_time = #{registTime},</if>
+			<if test="infoState != null and infoState != ''">info_state = #{infoState},</if>
+			<if test="creditRatingId != null">credit_rating_id = #{creditRatingId},</if>
+			<if test="channelId != null and channelId !=''">channel_id = #{channelId},</if>
+			<if test="auditState != null and auditState !=''">audit_state = #{auditState},</if>
+			<if test="marketState != null and marketState !=''">market_state = #{marketState},</if>
+            <if test="jobState != null and jobState !=''">job_state = #{jobState},</if>
+            <if test="emergencyContactState != null and emergencyContactState !=''">emergency_contact_state = #{emergencyContactState},</if>
+            <if test="taobaoState != null and taobaoState !=''">taobao_state = #{taobaoState},</if>
+            <if test="zhimaState != null and zhimaState !=''">zhima_state = #{zhimaState},</if>
+            <if test="telecomState != null and telecomState !=''">telecom_state = #{telecomState},</if>
+            <if test="identityState != null and identityState !=''">identity_state = #{identityState},</if>
+			<if test="deviceType != null">device_type = #{deviceType},</if>
+			<if test="shareCode != null">share_code = #{shareCode},</if>
+			<if test="delayDegreeDate != null">delay_degree_date = #{delayDegreeDate},</if>
+			<if test="delayDegreeId != null">delay_degree_id = #{delayDegreeId},</if>
+			<if test="memberDegreeId != null">member_degree_id = #{memberDegreeId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除用户 -->
+	<delete id="delete" parameterType="long">
+	     delete from `user` where id=#{id}
+	</delete>
+
+	<!-- 查询真信已回调但状态仍未更新的用户 -->
+	<select id="getAuditStateUnchangedUser" resultType="java.util.Map">
+		SELECT
+			user.id,
+			user_info.recommend_code
+		FROM
+			`user`
+		JOIN user_info ON `user`.id = user_info.user_id
+		WHERE
+			user.audit_state = '3'
+		AND user_info.recommend_code IS NOT NULL
+	</select>
+	
+	<select id="getMonth8Upc" resultType="Map">
+		SELECT
+		DATE_FORMAT(la.apply_time,'%Y-%m-%d') AS 'dd',
+		CONCAT(la.user_id,'') AS 'userId',
+		(SELECT phone FROM `user` WHERE id = la.user_id) AS 'phone'
+		FROM 
+		loan_apply la
+		FORCE INDEX(applytime)
+		WHERE
+		la.apply_time >= #{start}
+		AND
+		la.apply_time <![CDATA[<]]> #{end}
+		AND
+		(
+		rule_description LIKE '%100015%'
+		OR
+		rule_description LIKE '%300005%'
+		)
+		AND
+		la.state = '4'
+	</select>
+
+	<select id="getWaitForUpdateDegree" resultType="User">
+		SELECT
+			user.id,
+			user.member_degree_id AS 'memberDegreeId',
+			user.delay_degree_id AS 'delayDegreeId',
+			mcd.id AS 'memberCardRecord.id'
+		FROM
+			`user`
+		LEFT JOIN
+			member_card_record mcd ON user.id = mcd.user_id AND mcd.card_state = 'VALID'
+		WHERE
+			user.delay_degree_date = #{delayDegreeDate}
+	</select>
+
+	<update id="updateMemberDegreeTo2" parameterType="List">
+		update `user` 
+		set member_degree_id='2'
+		where
+		 id in 
+		  (
+		<foreach collection="list" item="item" index="index" separator="," >  
+		       
+		        	#{item}
+		       
+	    </foreach>  
+	     )  
+	    and
+	     member_degree_id='1'
+	</update>
+
+	<update id="clearDelayDegree" parameterType="Long">
+		UPDATE `user`
+		SET
+			delay_degree_id = NULL,
+			delay_degree_date = NULL
+		WHERE
+			id = #{id}
+	</update>
+
+	<select id="getByIds" parameterType="List" resultType="Map">
+		SELECT
+			<include refid="userColumns"/>,
+			ui.name as username
+		FROM
+		user u
+		LEFT JOIN  user_info ui ON u.id=ui.user_id
+		where
+		u.id in
+		<foreach collection="list" item="item" open="(" separator=","
+				 close=")">
+			${item.userId}
+		</foreach>
+		AND
+		u.info_state IN (6,9,10,12)
+	</select>
+
+	<select id="getNotInUsersByUserId"  parameterType="List" resultType="Map">
+		SELECT
+		<include refid="userColumns"/>,
+		ui.name as username
+		FROM
+		`user` u
+		LEFT JOIN  user_info ui ON u.id=ui.user_id
+		where
+		u.id  in
+		<foreach collection="list" item="item" open="(" separator=","
+				 close=")">
+			${item.userId}
+		</foreach>
+		AND
+		u.info_state NOT IN (6,9,10,12)
+	</select>
+</mapper> 

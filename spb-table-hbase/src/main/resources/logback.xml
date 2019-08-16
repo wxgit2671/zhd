@@ -1,0 +1,104 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- 控制台输出 -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder 默认配置为PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按时间滚动生成日志文件的策略 -->
+    <appender name="DateRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>~/logs/mimidai-cms.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>~/logs/mimidai-cms.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 记录HBase相关日志 -->
+    <appender name="HbaseLogFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/logs/hbase.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/logs/hbase.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
+                %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 记录tableStore相关日志 -->
+    <appender name="TableStoreLogFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/logs/tableStore.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/logs/tableStore.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <!-- 保留 30天数据，默认无限 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
+                %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 演示按时间滚动的策略 -->
+    <appender name="ExecuteTimeLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>~/logs/executeTime.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>~/logs/executeTime.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.mimidai" level="DEBUG" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="DateRollingFile"/>
+    </logger>
+
+    <logger name="log.hbase" level="INFO" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="HbaseLogFile" />
+    </logger>
+
+    <logger name="log.tableStore" level="INFO" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="TableStoreLogFile" />
+    </logger>
+
+    <logger name="sysLogger" level="ERROR" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="ExecuteTimeLogFile"/>
+    </logger>
+
+    <logger name="dao" level="DEBUG">
+        <appender-ref ref="Console"/>
+    </logger>
+    <!-- root: 默认日志输出 -->
+    <root level="WARN">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="DateRollingFile"/>
+    </root>
+</configuration>

@@ -1,0 +1,24 @@
+server:
+  port: 8080
+  tomcat.uri-encoding: UTF-8
+  session-timeout: 3600
+#---------------------------------
+spring:
+  profiles.active: develop
+  jmx.enabled: false
+  mvc:
+       view:
+            prefix: /WEB-INF/pages/
+            suffix: .jsp
+  http:
+       encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+  main:
+    banner-mode: 'off'
+
+#---------------------------------
+mybatis:
+  mapperLocations: classpath:mapper/**/*.xml
+  typeAliasesPackage: com.wxtest.demo.entity
