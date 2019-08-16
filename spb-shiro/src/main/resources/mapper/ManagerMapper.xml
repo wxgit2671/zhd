@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wx.zhd.spbshiro.dao.ManagerDao">
+    <sql id="managerColumns">
+        m.id as id,
+        m.login_name as loginName,
+        m.name as name,
+        m.password as password,
+        m.state as state,
+        m.leader_id as `leaderId`,
+        m.white_list as `whiteList`,
+        m.collection_group_id as `collectionGroupId`,
+        m.leader_id as `leader.id`,
+        m.role_id as 'roleId',
+        m.creat_id as 'creatId',
+        m.creat_time as 'creatTime',
+        m.update_time as 'updateTime',
+        creat.id as 'creat.id',
+        creat.name as 'creat.name',
+        m.is_update_password as 'updatePassword',
+        m.phone as 'phone',
+        m.member_degree_id as 'memberDegreeId',
+        <!--m.system as 'system'-->
+        m.channel_code as 'channel.code'
+    </sql>
+    <sql id="whereSql">
+        <where>
+            <if test="name != null and name != ''">and m.name like CONCAT(CONCAT('%',#{name}),'%')</if>
+            <if test="loginName != null and loginName != ''">and m.login_name like
+                CONCAT(CONCAT('%',#{loginName}),'%')
+            </if>
+            <if test="state != null and state != ''">and m.state = #{state}</if>
+            <if test="leaderId != null and leaderId != '' ">and m.leader_id = #{leaderId}</if>
+            <if test="id != null">
+                and m.id != #{id}
+            </if>
+        </where>
+    </sql>
+    <sql id="roleColumns">
+		r.id as "role.id",
+		r.name as "role.name",
+		r.advanced as "role.advanced",
+		r.description as "role.description"
+	</sql>
+    <sql id="conditionSql">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="state!=null and state!=''">and m.state = #{state}</if>
+                <if test="beginTime!=null">and m.creat_time >= #{beginTime}</if>
+                <if test="endTime!=null">and m.creat_time <![CDATA[<=]]> #{endTime}</if>
+                <if test="roleId != null and roleId != '' ">and m.role_id = #{roleId}</if>
+                <if test="creatId != null and creatId!= '' ">and m.creat_id = #{creatId}</if>
+                <if test="keyword!=null and keyword!='' ">
+                    and(m.login_name like CONCAT(#{keyword},'%') or m.name like CONCAT(#{keyword},'%') or m.id =
+                    #{keyword})
+                </if>
+                <if test="leaderIds != null">
+                    AND m.leader_id IN (
+                    <foreach collection="leaderIds" item="leaderIdItem" separator=",">
+                        #{leaderIdItem}
+                    </foreach>
+                    )
+                </if>
+            </trim>
+        </where>
+    </sql>
+
+    <!-- 根据条件查询所有用户 -->
+    <select id="findAllBycondition" parameterType="Map" resultType="Manager">
+        select
+        c.name as 'channel.name',
+        <include refid="managerColumns"></include>,
+        <include refid="roleColumns"></include>
+        from manager m
+        left join role r on (r.id=m.role_id)
+        left join manager creat on (creat.id=m.creat_id)
+        LEFT JOIN channel c ON c.`code`=m.channel_code
+        <include refid="conditionSql"></include>
+        order by state desc,m.id desc
+    </select>
+
+    <!-- 根据ID获取用户	-->
+    <select id="getById" parameterType="long" resultType="Manager">
+        select
+        <include refid="managerColumns"></include>,
+        <include refid="roleColumns"></include>
+        from manager m
+        left join role r on (r.id=m.role_id)
+        left join manager creat on (creat.id=m.creat_id)
+        where m.id=#{id}
+    </select>
+
+
+    <!-- 根据条件查询所有用户 -->
+    <select id="getAll" resultType="Manager" parameterType="Manager">
+        select
+        <include refid="managerColumns"></include>,
+        <include refid="roleColumns"></include>
+        from manager m
+        left join role r on (r.id=m.role_id)
+        left join manager creat on (creat.id=m.creat_id)
+        <include refid="whereSql"></include>
+        order by m.state desc,convert(m.name using gbk) asc
+    </select>
+
+    <!-- 根据登陆名查询用户 -->
+    <select id="findByLoginName" parameterType="String" resultType="Manager">
+        select
+        <include refid="managerColumns"></include>,
+        <include refid="roleColumns"></include>
+        from manager m
+        left join role r on (r.id=m.role_id)
+        left join manager creat on (creat.id=m.creat_id)
+        where m.login_name=#{loginName}
+    </select>
+
+    <!-- 查询用户id -->
+    <select id="findAllId" resultType="Long">
+        select id from manager m where m.state='1'
+        <if test="roleIds != null">
+            and m.role_id in (
+            <foreach collection="roleIds" item="roleId" separator=",">
+                #{roleId}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <!-- 保存用户 -->
+    <insert id="insert" parameterType="Manager" useGeneratedKeys="true" keyProperty="id">
+        insert into manager (
+        login_name,
+        name,
+        password,
+        state,
+        role_id,
+        white_list,
+        leader_id,
+        creat_id,
+        creat_time,
+        update_time,
+        is_update_password,
+        phone,
+        <!--system,-->
+        member_degree_id,
+        channel_code
+        ) values (
+        #{loginName},
+        #{name},
+        #{password},
+        #{state},
+        #{roleId},
+        #{whiteList},
+        #{leaderId},
+        #{creatId},
+        #{creatTime},
+        #{updateTime},
+        #{updatePassword},
+        #{phone},
+        <!--#{system},-->
+        #{memberDegreeId},
+        #{channel.code}
+        )
+    </insert>
+
+    <!-- 更新用户 -->
+    <update id="update" parameterType="Manager">
+        update manager
+        <set>
+            <if test="loginName != null">login_name = #{loginName},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="leaderId != null">leader_id = #{leaderId},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="whiteList != null">white_list = #{whiteList},</if>
+            <if test="updateTime!=null">update_time = #{updateTime},</if>
+            <if test="creatId!=null">creat_id = #{creatId},</if>
+            <if test="updatePassword!=null">is_update_password = #{updatePassword},</if>
+            <if test="phone!=null">phone = #{phone},</if>
+            <!--<if test="system!=null">system = #{system},</if>-->
+            <if test="memberDegreeId!=null">member_degree_id = #{memberDegreeId},</if>
+            channel_code = #{channel.code}
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="changeCollectionGroup">
+        update manager
+        <set>
+            <if test="groupId != null">collection_group_id = #{groupId}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 删除用户 -->
+    <delete id="delete" parameterType="long">
+	     delete from manager where id=#{id}
+	</delete>
+
+    <!-- 根据RoleID获取用户	-->
+    <select id="getByRoleId" parameterType="long" resultType="Manager">
+        select
+        <include refid="managerColumns"></include>
+        from manager m
+        left join manager creat on (creat.id=m.creat_id)
+        where m.role_id=#{id}
+        order by m.id desc
+    </select>
+    <!-- 根据RoleID获取用户	-->
+    <select id="findAllLeader" resultType="Manager">
+        select
+        <include refid="managerColumns"></include>
+        from manager m
+        left join manager creat on (creat.id=m.creat_id)
+        where (m.leader_id is null or m.leader_id = 0)
+        <if test="id != null">
+            and m.id != #{id}
+        </if>
+        order by m.id desc
+    </select>
+    <select id="findCollectionByGroup" resultType="Manager" useCache="false">
+        select
+        <include refid="managerColumns"></include>
+        from manager m
+        left join manager creat on (creat.id=m.creat_id)
+        where m.role_id IN ('14','15','35') and m.state = '1'
+        <if test="groupId != null ">
+            and m.collection_group_id = #{groupId}
+        </if>
+        order by m.id asc
+    </select>
+    <select id="isAppointOut" parameterType="long" resultType="Map">
+		select ma.id,me.mark  from manager ma
+		left join role r on ma.role_id=r.id
+		left join permissions p on r.id=p.role_id
+		left join menu me on p.menu_id=me.id
+		where ma.id=#{managerId}
+		and me.mark like '%sys:button%' 
+		and ma.role_id not in (7)
+	</select>
+    <!-- 获取角色id下 所有 -->
+    <select id="getAvailableByRoleId" parameterType="Long" resultType="Manager">
+		select 
+			m.id as id,
+			m.login_name as loginName,
+			m.name as name, 
+			m.password as password,
+			m.state as state,
+			m.leader_id as `leaderId`,
+			m.white_list as `whiteList`,
+			m.collection_group_id as `collectionGroupId`,
+			m.leader_id as `leader.id`,
+			m.role_id as 'roleId',
+			m.creat_id as 'creatId',
+			m.creat_time as 'creatTime',
+			m.update_time as 'updateTime'
+		from manager m
+		where m.role_id=#{id} 
+			and m.state ='1'
+	</select>
+
+    <select id="findManagerIdsByCondition" parameterType="Map" resultType="Long">
+        SELECT
+        m.id
+        FROM
+        manager m
+        <include refid="conditionSql"></include>
+    </select>
+    <select id="getAllOutSourceManager" resultType="Manager">
+        select
+        <include refid="managerColumns"></include>,
+        <include refid="roleColumns"></include>
+        from manager m
+        left join role r on (r.id=m.role_id)
+        left join manager creat on (creat.id=m.creat_id)
+        where m.role_id='35'
+        order by m.state desc,convert(m.name using gbk) asc
+    </select>
+
+    <select id="getByPhone" parameterType="String" resultType="Manager">
+        select
+        <include refid="managerColumns"></include>
+        from manager m
+        left join manager creat on (creat.id=m.creat_id)
+        where m.state = '1'
+        and m.phone = #{phone}
+    </select>
+    <!-- 更新用户 -->
+    <update id="updatePwd" parameterType="Manager">
+		update manager
+		SET password = #{password},
+		is_update_password = #{updatePassword}
+		where id = #{id}
+	</update>
+
+    <!-- 按分组查询业务人员,正序 -->
+    <select id="findCollectionByGroupAsc" resultType="Manager" useCache="false">
+        select
+        <include refid="managerColumns"></include>
+        from manager m
+        left join manager creat on (creat.id=m.creat_id)
+        where m.role_id IN ('14','15','35') and m.state = '1'
+        <if test="groupId != null ">
+            and m.collection_group_id = #{groupId}
+        </if>
+        order by m.id asc
+    </select>
+
+    <!-- 按分组查询业务人员,反序 -->
+    <select id="findCollectionByGroupDesc" resultType="Manager" useCache="false">
+        select
+        <include refid="managerColumns"></include>
+        from manager m
+        left join manager creat on (creat.id=m.creat_id)
+        where m.role_id IN ('14','15','35') and m.state = '1'
+        <if test="groupId != null ">
+            and m.collection_group_id = #{groupId}
+        </if>
+        order by m.id desc
+    </select>
+
+
+    <!-- 按分组查询业务人员,正序-->
+    <select id="findCollectionByGroupS" resultType="Long" useCache="false">
+        select
+        m.id
+        from manager m
+        where m.role_id IN ('14','15','35') and m.state = '1'
+        <if test="groupId != null ">
+            and m.collection_group_id = #{groupId}
+        </if>
+        order by m.id asc
+    </select>
+
+    <select id="getStateById" resultType="Manager">
+        SELECT `state` FROM manager WHERE `id`=#{id}
+    </select>
+</mapper> 

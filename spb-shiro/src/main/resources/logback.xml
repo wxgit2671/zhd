@@ -1,0 +1,111 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <!-- 控制台输出 -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder 默认配置为PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按时间滚动生成日志文件的策略 -->
+    <appender name="DateRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/logs/mimidai-miniService.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/logs/mimidai-miniService.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- 记录HBase相关日志 -->
+	<appender name="HbaseLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/var/logs/hbaseMini.log</file>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/logs/hbaseMini.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- 保留 30天数据，默认无限-->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+  <!-- 记录tableStore相关日志 -->
+  <appender name="TableStoreLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/var/logs/tableStoreMini.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/logs/tableStoreMini.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <!-- 保留 30天数据，默认无限-->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+    <!-- 第三方接口调用日志日志文件的策略 -->
+    <appender name="ThirdApiFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/logs/thirdexternalMini.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/logs/thirdexternalMini.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 记录电话邦相关日志 -->
+    <appender name="PhoneTags" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/var/logs/phoneTags.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/logs/phoneTags.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30天数据，默认无限-->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.mimidai" level="DEBUG" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="DateRollingFile"/>
+    </logger>
+
+    <logger name="log.third" level="INFO" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="ThirdApiFile"/>
+    </logger>
+    
+    <logger name="log.hbase" level="INFO" additivity="false">
+		<appender-ref ref="Console" />
+        <appender-ref ref="HbaseLogFile"/>
+    </logger>
+    <logger name="log.tableStore" level="INFO" additivity="false">
+      <appender-ref ref="Console" />
+      <appender-ref ref="TableStoreLogFile"/>
+    </logger>
+    <logger name="log.phoneTags" level="INFO" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="PhoneTags"/>
+    </logger>
+    <!-- root: 默认日志输出 -->
+    <root level="WARN">
+        <appender-ref ref="Console" />
+        <appender-ref ref="DateRollingFile"/>
+    </root>
+</configuration>

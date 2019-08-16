@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wx.zhd.spbshiro.dao.LoginLogDao">
+	<sql id="selectSql">
+		select 
+			login_log.id as 'id',
+			login_log.ip as 'ip',
+			login_log.login_time as `loginTime`,
+			login_log.username as `userName`,
+			login_log.name as `name`
+		from login_log
+	</sql>
+	<sql id="whereSql">
+		<where>
+			<trim prefixOverrides="and">
+			<if test="beginTime != null">
+				and login_log.login_time >= #{beginTime}
+			</if>
+			<if test="endTime != null">
+				and login_log.login_time <![CDATA[<=]]> #{endTime}
+			</if>
+			<if test="keyword != null and keyword != '' ">
+				and (login_log.username = #{keyword} or login_log.ip = #{keyword})
+			</if>
+			</trim>
+		</where>
+	</sql>
+	
+	<!-- 根据ID获取日志	-->
+	<select id="findById" parameterType="long" resultType="com.wx.zhd.spbshiro.entity.LoginLog">
+		<include refid="selectSql"></include>
+		where login_log.id=#{id}
+	</select>
+	
+
+	<!-- 根据条件查询所有日志 -->
+	<select id="findAll" parameterType="Map" resultType="com.wx.zhd.spbshiro.entity.LoginLog">
+		<include refid="selectSql"></include>
+		<include refid="whereSql"></include>
+		order by id desc
+	</select>
+
+	<!-- 保存日志 -->
+	<insert id="save" parameterType="LoginLog" useGeneratedKeys="true" keyProperty="id">
+		insert into login_log ( ip,login_time,username,name)
+		values (#{ip},#{loginTime},#{userName},#{name})
+	</insert>
+	
+</mapper> 
