@@ -14,7 +14,6 @@ public interface MenuDao {
 	 * 根据id获取一个菜单
 	 * @param id
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:02:18 
 	 */
 	Menu findById(Long id);
@@ -22,7 +21,6 @@ public interface MenuDao {
 	 * 根据条件查询所有菜单
 	 * @param menu
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:02:28 
 	 */
 	List<Menu> findAll(Menu menu);
@@ -30,7 +28,6 @@ public interface MenuDao {
 	 * 根据角色id查询所有菜单
 	 * @param roleId
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:02:41 
 	 */
 	List<Menu> findByRoleId(Long roleId);
@@ -38,7 +35,6 @@ public interface MenuDao {
 	 * 根据menuId查询素有roleId
 	 * @param menuId
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年3月2日 下午1:46:23
 	 */
 	List<Long> findRoleByMenuId(@Param("menuId") Long menuId);
@@ -46,7 +42,6 @@ public interface MenuDao {
 	 * 保存一个菜单
 	 * @param menu
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:03:03
 	 */
 	void save(Menu menu);
@@ -54,7 +49,6 @@ public interface MenuDao {
 	 * 更新一个菜单
 	 * @param menu
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:03:09
 	 */
 	int update(Menu menu);
@@ -63,7 +57,6 @@ public interface MenuDao {
 	 * 保存角色权限
 	 * @param permission
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:03:20
 	 */
 	int savePermissions(Map<String, Object> permission);
@@ -71,7 +64,6 @@ public interface MenuDao {
 	 * 清除权限根据角色id
 	 * @param roleId
 	 * @return
-	 * @author:	haidong
 	 * @date: 2016年2月23日 上午11:03:27
 	 */
 	int clearPermissionsByRoleId(Long roleId);
@@ -94,7 +86,6 @@ public interface MenuDao {
 	/**
 	 * @Description:拥有该权限的角色
 	 *
-	 * @author MaFuxin
 	 * @date 2017/6/7 20:36
 	 */
 	List<Long> getRoleIds(@Param("menuId") Long menuId);

@@ -2,7 +2,6 @@ package com.wx.zhd.spbshiro.controller;
 
 import com.wx.zhd.spbshiro.entity.LoginLog;
 import com.wx.zhd.spbshiro.entity.Manager;
-import com.wx.zhd.spbshiro.service.LoginLogService;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -11,9 +10,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,18 +26,18 @@ import javax.servlet.http.HttpSession;
 /**
  * 登录控制类
  *
- * @author Boya
+ * @author wx
  */
 @Controller
 public class LoginController extends BaseController {
     /**
      * @Dscrription:登陆日志
-     * @author: haidong
+     * @author: wx
      * @date: 2016年3月16日 下午3:46:26
      */
     Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping({"/","/index"})
+    @RequestMapping({"/", "/index"})
     public String index() {
 	 /* //读取 menu 信息
         List<Menu> menus=menuService.getAllMenu();
@@ -67,13 +64,12 @@ public class LoginController extends BaseController {
     public String loginInput(String code, Manager manager, RedirectAttributes redirectAttributes,
             HttpServletRequest request) {
         try {
-            //boolean flag = validateCode(code, request.getSession());
-            if (true) {
+            boolean flag = validateCode(code, request.getSession());
+            if (flag) {
                 //shiro认证
-                System.out.println("ssss"+manager);
                 SecurityUtils.getSubject().login(new UsernamePasswordToken(manager.getLoginName(),
-						manager.getPassword()));
-                SecurityUtils.getSubject().getSession().setTimeout(1000*60*5);
+                        manager.getPassword()));
+                SecurityUtils.getSubject().getSession().setTimeout(1000 * 60 * 5);
                 //记录日志
                 Manager currentUser = currentUser();
                 LoginLog loginLog = new LoginLog();
@@ -101,12 +97,6 @@ public class LoginController extends BaseController {
         return "redirect:/login";
     }
 
-    @RequestMapping("/logout")
-    public String logout() {
-        System.out.println("wwwwwwwwwwwwwwwwwwww");
-        SecurityUtils.getSubject().logout();
-        return "redirect:/login";
-    }
     @RequestMapping("/checkCode")
     @ResponseBody
     public Map<String, Object> checkCode(String code, HttpSession session) {
@@ -134,9 +124,6 @@ public class LoginController extends BaseController {
         }
     }
 
-    /**
-     * Description:禁用账号页面 author: liuchangxin Date: Created in 2018/11/13 17:14
-     */
     @RequestMapping("/forbidden")
     public String forbidden() {
         return "forbidden";

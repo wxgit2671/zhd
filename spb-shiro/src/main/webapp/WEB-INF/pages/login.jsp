@@ -19,7 +19,7 @@
 <script type="text/javascript" src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <!-- <![endif]-->
 <!--[if IE]>
-		<script type="text/javascript" src="//apps.bdimg.com/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script type="text/javascript" src="//apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 		<![endif]-->
 <script src="//apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 

@@ -8,7 +8,7 @@ spring:
   jmx.enabled: false
   mvc:
        view:
-            prefix: /WEB-INF/
+            prefix: /WEB-INF/pages/
             suffix: .jsp
   http:
        encoding:

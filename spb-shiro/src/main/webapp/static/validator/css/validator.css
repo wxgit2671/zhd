@@ -1,0 +1,35 @@
+/* 表单验证 */
+.img-validator {
+	width: 17px;
+	height: 17px;
+	margin: auto;
+	vertical-align: middle;
+}
+
+.img-validator-yes {
+	background:url('../img/img.png') no-repeat;
+	display: inline-block;
+}
+
+.img-validator-no {
+	background:url('../img/img.png') no-repeat;
+	background-position: 0 -51px;
+	display: inline-block;
+}
+
+.img-validator-info {
+	background:url('../img/img.png') no-repeat;
+	background-position: 0 -34px;
+	display: inline-block;
+}
+
+.span-validator {
+	float: left;
+	display: block;
+	line-height: 30px;
+	vertical-align: middle;
+}
+
+.form-validator .form-group {
+		
+}

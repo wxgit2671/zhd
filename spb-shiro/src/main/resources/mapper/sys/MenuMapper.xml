@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wx.zhd.spbshiro.dao.MenuDao">
+	<cache />
+	<sql id="selectSql">
+		select
+		id as 'id',
+		name as 'name',
+		path as `path`,
+		mark as `mark`,
+		description as 'description',
+		state as 'state',
+		father_id as `fatherId`,
+		is_menu as `isMenu`
+		from menu
+	</sql>
+	<!-- select all sql -->
+	<sql id="selectAllSql">
+		select
+		id as 'id',
+		name as 'name',
+		path as `path`,
+		mark as `mark`,
+		description as 'description',
+		state as 'state',
+		flag as 'flag',
+		level as 'level',
+		father_id as 'fatherId',
+		is_menu as 'isMenu',
+		left_menu as 'leftMenu',
+		sort as 'sort',
+		target as 'target'
+		from menu
+	</sql>
+	<sql id="whereSql">
+		<where>
+			<if test="true">flag = 0</if>
+			<if test="state != null and state != ''"> and state =#{state}</if>
+			<if test="fatherId != null"> and father_id = #{fatherId}</if>
+		</where>
+	</sql>
+
+	<!-- 根据ID获取角色 -->
+	<select id="findById" parameterType="long" resultType="Menu">
+		<include refid="selectSql"></include>
+		where id=#{id}
+		and flag = 0
+	</select>
+
+
+	<!-- 根据条件查询所有角色 -->
+	<select id="findAll" resultType="Menu">
+		<include refid="selectSql"></include>
+		<include refid="whereSql"></include>
+	</select>
+	<!-- 根据条件查询所有角色 -->
+	<select id="findRoleByMenuId" resultType="Long">
+		select role_id from
+		permissions where menu_id = #{menuId}
+	</select>
+
+	<!-- 保存角色 -->
+	<insert id="save" parameterType="Menu" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into menu ( name,path,mark,description,is_menu)
+		values (#{name},#{path},#{mark},#{description},#{isMenu})
+	</insert>
+
+	<!-- 更新角色 -->
+	<update id="update" parameterType="Menu">
+		update menu
+		<set>
+			<if test="name!=null and name!=''">name = #{name},</if>
+			<if test="url!=null and url!=''">path = #{path},</if>
+			<if test="mark!=null and mark!=''">mark = #{mark},</if>
+			<if test="description!=null and description!=''">description = #{description},</if>
+			<if test="state!=null and state!=''">state = #{state},</if>
+			<if test="isMenu!=null">is_menu = #{isMenu}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除角色 -->
+	<delete id="delete" parameterType="long">
+		delete from menu where id=#{id}
+	</delete>
+	<!-- 权限控制 -->
+	<!-- 根据ID获取角色 -->
+	<select id="findByRoleId" parameterType="long" resultType="Menu">
+		<include refid="selectSql"></include>
+		where flag = 0 and id in (select menu_id from permissions where
+		role_id = #{roleId})
+	</select>
+	<insert id="savePermissions">
+		insert into permissions (menu_id , role_id)
+		values (
+		#{menuId},#{roleId})
+	</insert>
+
+	<delete id="clearPermissionsByRoleId">
+		delete from permissions where role_id = #{roleId}
+	</delete>
+
+
+
+	<!-- 添加菜单信息 start -->
+	<insert id="addMenuSubmit" parameterType="Menu"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into menu
+		(name,path,mark,description,state,flag,level,father_id,is_menu,left_menu,sort)
+		values
+		(#{name},#{path},#{mark},#{description},#{state},#{flag},#{level},#{fatherId},#{isMenu},#{leftMenu},#{sort})
+	</insert>
+	
+	<insert id="newMenuAddToPermission" parameterType="Long" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO permissions(role_id,menu_id) VALUES (7,#{menu_id});
+	</insert>
+	<!-- 添加菜单信息 start -->
+	<!-- 删除菜单 逻辑删除 start -->
+	<update id="deleteMenuById" parameterType="String">
+		update menu
+		set flag='1'
+		where id=#{id}
+	</update>
+	<!-- 删除菜单 逻辑删除 end -->
+
+	<!-- 删除菜单 物理 删除 start -->
+	<delete id="deleteMenuPysicalById" parameterType="String">
+		delete from
+		menu where id =#{id}
+	</delete>
+	
+	<delete id="deleteMenucascadePermission" parameterType="String">
+	   	DELETE FROM permissions WHERE menu_id=#{id}
+	</delete>
+	<!-- 删除菜单 物理 删除 end -->
+
+	<!-- 修改菜单信息 start -->
+	<update id="updateMenu" parameterType="Menu">
+		update menu
+		<!-- set name=#{name},path=#{path},mark=#{} -->
+		<set>
+			name = #{name},
+			path = #{path},
+			mark = #{mark},
+			description = #{description},
+			flag = #{flag},
+			is_menu = #{isMenu},
+			left_menu=#{leftMenu},
+			sort=#{sort},
+			target=#{target}
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 修改菜单信息 end -->
+
+
+	<!-- 查询所有菜单信息 start -->
+	<select id="selectMenuInfo" resultType="Menu">
+		<include refid="selectAllSql"></include>
+	</select>
+	<!-- 查询所有菜单信息 END -->
+
+	<!-- 根据ID查询菜单信息 start -->
+	<select id="getMenuById" parameterType="long" resultType="Menu">
+		<include refid="selectAllSql"></include>
+		where
+		id=#{id}
+	</select>
+	<!-- 根据ID查询菜单信息 END -->
+	<!-- 查询 左侧菜单 信息 start -->
+	<select id="getLeftMenu" resultType="Map">
+		select
+		m.id as 'id',
+		m.name as 'text',
+		m.path as 'url',
+		m.mark as `mark`,
+		m.description as 'description',
+		m.state as 'state',
+		m.level as 'level',
+		m.father_id as 'fatherId',
+		m.is_menu as 'isMenu'
+		from menu m
+		where flag='0'
+	</select>
+	<!-- 查询 左侧菜单 信息 end -->
+	<!-- 查询 current manager`s MENU START -->
+	<select id="getCurrentLeftMenu" parameterType="Long" resultType="Map">
+		select
+		m.id as 'id',
+		m.name as 'text',
+		m.path as 'url',
+		m.mark as `mark`,
+		m.description as 'description',
+		m.state as 'state',
+		m.level as 'level',
+		m.father_id as 'fatherId',
+		m.is_menu as 'isMenu',
+		m.sort as 'sort',
+		m.target as 'target'
+		FROM
+		permissions p
+		LEFT JOIN menu m
+		on p.menu_id= m.id
+		WHERE role_id=#{roleId}
+		and flag='0' and left_menu='1'
+	</select>
+	<!-- 查询 current manager`s MENU END -->
+
+
+	<select id="getRoleIds" resultType="long">
+		SELECT role_id
+		FROM
+		permissions
+		WHERE menu_id = #{menuId}
+	</select>
+
+</mapper> 

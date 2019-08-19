@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wx.zhd.spbshiro.dao.sys.ManagerAlertDao">
+	<sql id="colums">
+			ma.id AS id,
+			ma.manager_id AS managerId,
+			ma.code_key AS codeKey,
+			ma.alert_time AS alertTime,
+			ma.content AS content,
+			ma.state AS state,
+			ma.url AS url,
+			ma.gmt_create AS gmtCreate,
+			ma.gmt_modified AS gmtModified,
+			ma.check_token AS checkToken,
+			ma.invalid_reason AS invalidReason,
+			c.id AS 'code.id',
+			c.key AS 'code.key',
+			c.value AS 'code.value',
+			c.category AS 'code.category',
+			c.sort AS 'code.sort',
+			c.state AS 'code.state'
+	</sql>
+	<select id="getCountUnread" parameterType="Long" resultType="Integer">
+		SELECT
+			COUNT(id)
+		FROM
+			manager_alert
+		WHERE
+			manager_id = #{managerId}
+		and
+			state=0
+		and
+			now()>alert_time
+	</select>
+	<select id="getCountUnreadNew" parameterType="Map" resultType="Integer">
+		SELECT
+			COUNT(id)
+		FROM
+			manager_alert
+		WHERE
+			manager_id = #{managerId}
+		and
+			state=0
+		and
+			#{date}>=alert_time
+	</select>
+	<select id="getList" parameterType="Map" resultType="ManagerAlert">
+		SELECT
+			<include refid="colums"></include>
+		FROM
+			manager_alert ma
+		LEFT JOIN 
+			`code` c
+		ON 
+			ma.code_key=c.`key`
+		WHERE
+			ma.manager_id = #{managerId}
+		<if test="codeKey != null and codeKey !=''">
+			and ma.code_key=#{codeKey}
+		</if>
+		AND
+			c.category='managerAlert'
+		<if test="state != -1 ">
+		and
+			ma.state=#{state}
+		</if>	
+		and
+			now()>alert_time
+	</select>
+	<select id="getUnreadList" parameterType="Map" resultType="ManagerAlert">
+		SELECT
+			<include refid="colums"></include>
+		FROM
+			manager_alert ma
+		LEFT JOIN 
+			`code` c
+		ON 
+			ma.code_key=c.`key`
+		WHERE
+			ma.manager_id = #{managerId}
+		<if test="codeKey != null and codeKey !=''">
+			and ma.code_key=#{codeKey}
+		</if>
+		AND
+			c.category='managerAlert'
+		and
+			ma.state=0
+		and
+			now()>alert_time
+	</select>
+	<select id="getUnreadCodeKey" parameterType="Long" resultType="Map">
+		SELECT 
+			ma.code_key AS codeKey,
+			c.value AS value
+		FROM
+			manager_alert ma
+		LEFT JOIN 
+			`code` c
+		ON 
+			ma.code_key=c.`key`
+		WHERE
+			
+			ma.manager_id = #{managerId}
+		AND
+			ma.state=0
+		AND
+			c.category='managerAlert'
+		AND
+			now()>alert_time
+		GROUP BY
+			ma.code_key,
+			c.value
+
+	</select>
+	<select id="checkExist" parameterType="Map" resultType="ManagerAlert">
+		SELECT
+			ma.id AS id,
+			ma.manager_id AS managerId,
+			ma.code_key AS codeKey,
+			ma.alert_time AS alertTime,
+			ma.content AS content,
+			ma.state AS state,
+			ma.url AS url,
+			ma.gmt_create AS gmtCreate,
+			ma.gmt_modified AS gmtModified,
+			ma.check_token AS checkToken,
+			ma.invalid_reason AS invalidReason
+		FROM
+			manager_alert ma
+		WHERE
+			ma.code_key = #{codeKey}
+		AND 
+			ma.state = 0
+		AND 
+			check_token = #{checkToken}
+		ORDER BY
+			id desc
+		limit 1
+	</select>
+	<insert id="saveOneManagerAlert">
+		INSERT INTO manager_alert 
+			(
+				manager_id,
+				code_key,
+				alert_time,
+				content,
+				state,
+				url,
+				check_token,
+				gmt_create,
+				gmt_modified
+			)
+		VALUES
+			(
+				#{managerId},
+				#{codeKey},
+				#{alertTime},
+				#{content},
+				#{state},
+				#{url},
+				#{checkToken},
+				NOW(),
+				NOW()
+			)
+	</insert>
+	<update id="setStateToRead" parameterType="Long">
+		UPDATE manager_alert
+		SET state = 1,
+			gmt_modified=NOW()
+		WHERE
+			id = #{managerAlertId}
+	</update>
+	<update id="setStateToIgnore" parameterType="Long">
+		UPDATE manager_alert
+		SET state = 2,
+			gmt_modified=NOW()
+		WHERE
+			id = #{managerAlertId}
+	</update>
+	<update id="setInvalid" parameterType="Map">
+		UPDATE manager_alert
+		SET state = 3,
+			invalid_reason=#{invalidReason},
+			gmt_modified=NOW()
+		WHERE
+			id = #{managerAlertId}
+	</update>
+	<update id="disableValidRecordByKeyAndToken" parameterType="Map">
+		UPDATE manager_alert
+		set state = 3,
+			invalid_reason=#{invalidReason},
+			gmt_modified=NOW()
+		WHERE
+			code_key=#{codeKey}
+		and
+			check_token=#{checkToken}
+	</update>
+	<update id="disableValidRecordByKeyAndTokenAndManagerId" parameterType="Map">
+		UPDATE manager_alert
+		SET state = '3',
+		 invalid_reason = #{invalidReason},
+		 gmt_modified=NOW()
+		WHERE
+			manager_id = #{managerId}
+		AND code_key = #{codeKey}
+		AND check_token = #{checkToken}
+	</update>
+	<select id="getAllCodeKeyByManagerId" parameterType="Long" resultType="Map">
+		SELECT 
+			ma.code_key AS codeKey,
+			c.value AS value
+		FROM
+			manager_alert ma
+		LEFT JOIN 
+			`code` c
+		ON 
+			ma.code_key=c.`key`
+		WHERE
+			ma.manager_id = #{managerId}
+		AND
+			c.category='managerAlert'
+		GROUP BY
+			ma.code_key,
+			c.value
+	</select>
+	
+	<select id="findRecentAnHourByUserId" parameterType="String" resultType="ManagerAlert">
+		SELECT
+			ma.id AS id,
+			ma.manager_id AS managerId,
+			ma.code_key AS codeKey,
+			ma.alert_time AS alertTime,
+			ma.content AS content,
+			ma.state AS state,
+			ma.url AS url,
+			ma.gmt_create AS gmtCreate,
+			ma.gmt_modified AS gmtModified,
+			ma.check_token AS checkToken,
+			ma.invalid_reason AS invalidReason
+		FROM
+			manager_alert ma
+		WHERE
+			ma.check_token = #{userId}
+		AND
+			TIMESTAMPDIFF(HOUR,gmt_create,NOW()) &lt; 1
+		ORDER BY
+			id desc
+		limit 1
+	</select>
+</mapper> 
