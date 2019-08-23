@@ -37,8 +37,6 @@ public class MyShiroRealm extends AuthorizingRealm {
 	private ManagerDao managerDao;
 	/**
 	 * @Dscrription:菜单数据库查询类
-	 * @author:	haidong
-	 * @date: 2016年2月24日 上午9:30:48 
 	 */
 	@Autowired
 	private MenuDao menuDao;

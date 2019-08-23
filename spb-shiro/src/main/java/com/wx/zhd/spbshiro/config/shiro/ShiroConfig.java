@@ -15,7 +15,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.Filter;
-
+/**
+ * @author wangxin
+ * @classDescription 配置shiro相关
+ * @create 2019-08-16 11:13
+ **/
 @Configuration
 public class ShiroConfig {
     @Bean

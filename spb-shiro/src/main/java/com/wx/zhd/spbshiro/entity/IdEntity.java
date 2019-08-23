@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 /**
  * 通用实体基类
- * 
- * @author Boya
- *
  */
 public class IdEntity implements Serializable {
 

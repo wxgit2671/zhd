@@ -10,8 +10,6 @@ import java.util.Map;
 /**
  * @ClassName:LoginLogDao
  * @Dscrription:登陆日志数据操作类
- * @author:	haidong
- * @date: 2016年3月16日 下午3:31:42 
  */
 @Repository
 public interface LoginLogDao {

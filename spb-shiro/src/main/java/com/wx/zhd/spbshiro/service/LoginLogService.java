@@ -13,28 +13,29 @@ import java.util.Map;
 
 @Service
 public class LoginLogService {
-	private static final Logger logger  = LoggerFactory.getLogger(LoginLogService.class);
-	/**
-	 * @Dscrription:登陆日志数据操作类
-	 * @author:	haidong
-	 * @date: 2016年3月16日 下午3:34:19 
-	 */
-	@Autowired
-	private LoginLogDao loginLogDao;
-	public LoginLog findById(Long id){
-		return loginLogDao.findById(id);
-	}
-	public List<LoginLog> findAll(Map<String,Object> condition){
-		return loginLogDao.findAll(condition);
-	}
-	public boolean save(LoginLog loginLog){
-		boolean flag = false;
-		try{
-			loginLogDao.save(loginLog);
-			flag = true;
-		}catch(Exception e){
-			logger.error("登陆日志出错name--"+loginLog.getUserName(),e);
-		}
-		return flag;
-	}
+    private static final Logger logger = LoggerFactory.getLogger(LoginLogService.class);
+    /**
+     * @Dscrription:登陆日志数据操作类
+     */
+    @Autowired
+    private LoginLogDao loginLogDao;
+
+    public LoginLog findById(Long id) {
+        return loginLogDao.findById(id);
+    }
+
+    public List<LoginLog> findAll(Map<String, Object> condition) {
+        return loginLogDao.findAll(condition);
+    }
+
+    public boolean save(LoginLog loginLog) {
+        boolean flag = false;
+        try {
+            loginLogDao.save(loginLog);
+            flag = true;
+        } catch (Exception e) {
+            logger.error("登陆日志出错name--" + loginLog.getUserName(), e);
+        }
+        return flag;
+    }
 }

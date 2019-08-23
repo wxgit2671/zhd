@@ -33,7 +33,6 @@ public class LoginController extends BaseController {
     /**
      * @Dscrription:登陆日志
      * @author: wx
-     * @date: 2016年3月16日 下午3:46:26
      */
     Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -60,6 +59,14 @@ public class LoginController extends BaseController {
         return "hello";
     }
 
+    /**
+     * 登录接口
+     *
+     * @param code               验证码
+     * @param manager            用户信息
+     * @param redirectAttributes 重定向
+     * @param request            请求信息
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String loginInput(String code, Manager manager, RedirectAttributes redirectAttributes,
             HttpServletRequest request) {
@@ -69,6 +76,7 @@ public class LoginController extends BaseController {
                 //shiro认证
                 SecurityUtils.getSubject().login(new UsernamePasswordToken(manager.getLoginName(),
                         manager.getPassword()));
+                //设置登录session过期时间
                 SecurityUtils.getSubject().getSession().setTimeout(1000 * 60 * 5);
                 //记录日志
                 Manager currentUser = currentUser();
@@ -124,6 +132,10 @@ public class LoginController extends BaseController {
         }
     }
 
+    /**
+     * 用户禁止登录页面
+     * @return
+     */
     @RequestMapping("/forbidden")
     public String forbidden() {
         return "forbidden";

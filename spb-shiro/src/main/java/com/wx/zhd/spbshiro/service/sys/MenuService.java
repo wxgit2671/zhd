@@ -19,14 +19,12 @@ import java.util.Map;
 
 /**
  * @ClassName:MenuService
- * @date: 2016年2月23日 下午2:53:24
  */
 @Service
 public class MenuService {
     private static final Logger logger = LoggerFactory.getLogger(MenuService.class);
     /**
      * @Dscrription:菜单数据层操作类
-     * @date: 2016年2月23日 上午11:11:13
      */
     @Autowired
     private MenuDao menuDao;
@@ -39,7 +37,6 @@ public class MenuService {
      * 查询菜单返回map
      *
      * @param roleId 角色id，为空即查所有菜单，否则查角色拥有菜单
-     * @date: 2016年2月23日 上午11:22:45
      */
     public Map<Long, Menu> findAllMenuAsMap(Long roleId) {
         Map<Long, Menu> result = new HashMap<>();
@@ -57,8 +54,6 @@ public class MenuService {
 
     /**
      * 返回json格式的菜单列表
-     *
-     * @date: 2016年2月23日 下午2:52:41
      */
     public List<Menu> findMenusAsJson(Long roleId, Manager currentUser) {
         List<Menu> menus = Lists.newArrayList();
@@ -76,8 +71,6 @@ public class MenuService {
 
     /**
      * 为菜单添加子菜单列表
-     *
-     * @date: 2016年2月23日 下午2:52:57
      */
     private void addSonList(List<Menu> menus, Menu menu, Map<Long, Menu> hasMenus) {
         menu.setChecked(hasMenus.get(menu.getId()) != null);
@@ -92,8 +85,6 @@ public class MenuService {
 
     /**
      * 查询子菜单
-     *
-     * @date: 2016年2月23日 下午2:53:26
      */
     private List<Menu> findSonFormListByFatherId(List<Menu> list, Long menuId) {
         List<Menu> sonList = Lists.newArrayList();
@@ -107,8 +98,6 @@ public class MenuService {
 
     /**
      * 保存角色权限
-     *
-     * @date: 2016年2月23日 上午11:27:34
      */
     @Transactional
     public boolean savePermissions(Long roleId, Long[] menuIds) {
@@ -131,8 +120,6 @@ public class MenuService {
 
     /**
      * 返回所有roleId 通过菜单id
-     *
-     * @date: 2016年3月2日 下午1:48:35
      */
     public Long[] findRoleIdsByMenuId(Long menuId) {
         List<Long> roleIdList = menuDao.findRoleByMenuId(menuId);
@@ -143,48 +130,36 @@ public class MenuService {
 
     /**
      * 新增menu菜单
-     *
-     * @date: 2016年3月2日 下午1:48:35
      */
     public void saveMenu(Menu menu) {
-
         menuDao.save(menu);
     }
 
 
     @Transactional
     public void addMenuSubmit(Menu menu) {
-        // TODO Auto-generated method stub
         Long insertId = menuDao.addMenuSubmit(menu);
         menuDao.newMenuAddToPermission(menu.getId());
     }
 
     /**
      * 删除menu菜单(逻辑删除)
-     *
-     * @date: 2016年3月2日 下午1:48:35
      */
     public void deleteMenu(String id) {
-
         menuDao.deleteMenuById(id);
     }
 
     /**
      * 删除菜单(物理删除)
-     *
-     * @date: 2016年3月2日 下午1:48:35
      */
     @Transactional
     public void deleteMenuPysical(String id) {
-        // TODO Auto-generated method stub
         menuDao.deleteMenuPysicalById(id);
         menuDao.deleteMenucascadePermission(id);
     }
 
     /**
      * 修改menu菜单
-     *
-     * @date: 2016年3月2日 下午1:48:35
      */
     public void updateMenu(Menu menu) {
         menuDao.updateMenu(menu);

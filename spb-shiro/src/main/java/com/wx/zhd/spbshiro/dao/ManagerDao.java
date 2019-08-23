@@ -10,16 +10,12 @@ import java.util.Map;
 
 /**
  * 后台管理用户数据访问接口
- *
- * @author Boya
  */
 @Repository
 public interface ManagerDao {
     Manager getById(Long id);
 
     List<Manager> getAll(Manager manager);
-
-    List<Manager> getByName(String name);
 
     Manager findByLoginName(String loginName);
 

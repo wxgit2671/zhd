@@ -24,8 +24,6 @@ public class DynamicDataSourceContextHolder {
      *
      * @param dataSourceId
      * @return
-     * @author SHANHY
-     * @create  2016年1月24日
      */
     public static boolean containsDataSource(String dataSourceId){
         return dataSourceIds.contains(dataSourceId);

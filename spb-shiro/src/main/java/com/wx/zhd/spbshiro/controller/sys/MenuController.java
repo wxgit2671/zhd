@@ -132,7 +132,6 @@ public class MenuController extends BaseController {
      * */
     @RequestMapping("/deleteMenu")
     public String deleteMenu(String id, RedirectAttributes redirectAttributes) {
-
         menuService.deleteMenu(id);
         addSuccessMessage(redirectAttributes, "失效菜单成功！");
         return "redirect:/sys/menu/list";// user/blacklist-list

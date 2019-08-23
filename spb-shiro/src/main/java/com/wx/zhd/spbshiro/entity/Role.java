@@ -6,27 +6,19 @@ import java.util.Date;
 
 /**
  * 后台角色实体类
- * 
- * @author Boya
  */
 @SuppressWarnings("serial")
 public class Role extends IdEntity {
 	/**
 	 * @Dscrription:默认角色，不可删除
-	 * @author:	haidong
-	 * @date: 2016年2月25日 下午4:36:44 
 	 */
 	public static final String TYPE_DEFAULT="99";
 	/**
 	 * @Dscrription:系统角色
-	 * @author:	haidong
-	 * @date: 2016年2月25日 下午4:36:44 
 	 */
 	public static final String TYPE_SYS="0";
 	/**
 	 * @Dscrription:其他角色
-	 * @author:	haidong
-	 * @date: 2016年2月25日 下午4:36:51 
 	 */
 	public static final String TYPE_OTHER="1";
 	private String name;

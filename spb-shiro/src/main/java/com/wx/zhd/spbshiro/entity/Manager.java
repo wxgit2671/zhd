@@ -5,8 +5,6 @@ import java.util.Date;
 
 /**
  * 后台管理员实体类
- * 
- * @author Boya
  */
 @SuppressWarnings("serial")
 public class Manager extends IdEntity{

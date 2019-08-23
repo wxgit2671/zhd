@@ -9,7 +9,6 @@ import java.util.Map;
 
 /**
  * @ClassName: ManagerAlertDao
- * @date 2017年10月25日
  */
 @Repository
 public interface ManagerAlertDao {

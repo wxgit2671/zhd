@@ -93,9 +93,6 @@ public class RedisService {
 
     /**
      * 获取所有key
-     *
-     * @author: haidong
-     * @date: 2016年2月16日 下午2:34:04
      */
     public List<String> keys() {
         return keys("*");
@@ -112,8 +109,6 @@ public class RedisService {
 
     /**
      * 根据表达式获取key，并排序
-     *
-     * @date: 2016年2月16日 下午2:34:04
      */
     public List<String> keys(String pattern, Comparator<String> comparator) {
         List<String> keys = Lists.newArrayList(redisTemplate.keys(pattern).iterator());
@@ -142,8 +137,6 @@ public class RedisService {
 
     /**
      * 将values放到key下
-     *
-     * @date: 2016年3月29日 上午9:56:18
      */
     public void setAsList(String key, List<String> values) {
         redisTemplate.opsForList().rightPushAll(key, values);
@@ -151,8 +144,6 @@ public class RedisService {
 
     /**
      * 讲一个value放入key下的list中
-     *
-     * @date: 2016年3月29日 上午10:26:45
      */
     public void setAsList(String key, String value) {
         redisTemplate.opsForList().rightPush(key, value);
@@ -160,8 +151,6 @@ public class RedisService {
 
     /**
      * 获取一个key中第index的元素
-     *
-     * @date: 2016年3月29日 上午10:27:06
      */
     public String getAsList(String key, int index) {
         return redisTemplate.opsForList().index(key, index);
@@ -170,8 +159,6 @@ public class RedisService {
 
     /**
      * 获取一个key中第index的元素
-     *
-     * @date: 2016年3月29日 上午10:27:06
      */
     public Long countAsList(String key) {
         return redisTemplate.opsForList().size(key);
@@ -180,8 +167,6 @@ public class RedisService {
 
     /**
      * 获取一个key的list
-     *
-     * @date: 2016年3月29日 上午10:27:06
      */
     public List<String> getAsList(String key) {
         ListOperations<String, String> ops = redisTemplate.opsForList();
@@ -201,8 +186,6 @@ public class RedisService {
 
     /**
      * 获取一个key的从begin到end长度的list
-     *
-     * @date: 2016年3月29日 上午10:27:53
      */
     public List<String> getAsList(String key, long begin, long end) {
         ListOperations<String, String> ops = redisTemplate.opsForList();
@@ -211,8 +194,6 @@ public class RedisService {
 
     /**
      * 删除key中的value
-     *
-     * @date: 2016年3月29日 上午10:28:09
      */
     public void removeFromList(String key, String value) {
         ListOperations<String, String> ops = redisTemplate.opsForList();
@@ -284,10 +265,4 @@ public class RedisService {
         redisTemplate.opsForHash().putAll(key, map);
     }
 
-    /**
-     * @date 2018/4/4 10:23
-     */
-    public Double getHaiXiangAmount(String key, Double value) {
-        return redisTemplate.opsForValue().increment(key, value);
-    }
 }

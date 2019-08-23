@@ -5,8 +5,6 @@ import java.util.List;
 /**
  * @ClassName:Menu
  * @Dscrription:菜单实体类
- * @author:	haidong
- * @date: 2016年2月23日 上午9:51:30
  */
 @SuppressWarnings("serial")
 public class Menu extends IdEntity{
