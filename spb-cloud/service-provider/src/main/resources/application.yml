@@ -1,0 +1,19 @@
+server:
+  port: 8762
+spring:
+  application:
+    name: provider
+  datasource:
+    username: root
+    password: Mimidai123
+    url: jdbc:mysql://192.168.1.62:3306/mimidai?characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+mybatis:
+  # mapper 所对应接口所在位置
+  mapper-locations: classpath:/mapper/**/*.xml
+  typeAliasesPackage: com.zhd.serviceprovider.entity
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka/
