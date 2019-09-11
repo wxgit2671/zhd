@@ -6,8 +6,8 @@ package com.zhd.feign.controller;
 import com.zhd.feign.service.FeignService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,13 +22,13 @@ public class FeignController {
     @Autowired
     private FeignService feignService;
 
-    @RequestMapping("/getMessage" )
-    public String GetMessage(@RequestParam String message){
+    @RequestMapping("/user/getMessage" )
+    public String GetMessage(@RequestParam("message") String message){
         return feignService.getMessage(message);
     }
 
 
-    @RequestMapping("/selectAllUser")
+    @RequestMapping("/user/info")
     public String SelectAllUser(){
         return feignService.selectAllUser();
     }

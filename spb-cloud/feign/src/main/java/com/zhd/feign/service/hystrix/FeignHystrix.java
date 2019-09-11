@@ -4,7 +4,9 @@ package com.zhd.feign.service.hystrix;
  */
 
 import com.zhd.feign.dao.FeignDao;
+import com.zhd.feign.service.FeignService;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,8 +14,8 @@ import org.springframework.stereotype.Service;
  * @classDescription 配置熔断器
  * @create 2019-08-29 10:18
  **/
-@Service
-public class FeignHystrix implements FeignDao {
+@Component
+public class FeignHystrix implements FeignService {
 
 
     @Override
